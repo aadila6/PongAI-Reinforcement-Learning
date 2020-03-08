@@ -19,7 +19,8 @@ class QLearner(nn.Module):
         self.env = env
         self.input_shape = self.env.observation_space.shape
         self.num_actions = self.env.action_space.n
-
+        
+        #defining the graphs with initialzig 
         self.features = nn.Sequential(
             nn.Conv2d(self.input_shape[0], 32, kernel_size=8, stride=4),
             nn.ReLU(),
@@ -48,13 +49,10 @@ class QLearner(nn.Module):
         if random.random() > epsilon:
             state = Variable(torch.FloatTensor(np.float32(state)).unsqueeze(0), requires_grad=True)
             # TODO: Given state, you should write code to get the Q value and chosen action
-            
+            #action = random.randrange(self.env.action_space.n)
+            q_value = self.forward(state)
+            action  = q_value.max(1)[1].data[0]
         
-
-
-
-
-
         else:
             action = random.randrange(self.env.action_space.n)
         return action
@@ -72,9 +70,12 @@ def compute_td_loss(model, target_model, batch_size, gamma, replay_buffer):
     reward = Variable(torch.FloatTensor(reward))
     done = Variable(torch.FloatTensor(done))
     # implement the loss function here
-
-
-    
+    q_values      = model(state)
+    next_q_values = model(next_state)
+    q_value          = q_values.gather(1, action.unsqueeze(1)).squeeze(1)
+    next_q_value     = next_q_values.max(1)[0]
+    expected_q_value = reward + gamma * next_q_value * (1 - done)
+    loss = (q_value - Variable(expected_q_value.data)).pow(2).mean()
     return loss
 
 
@@ -90,9 +91,11 @@ class ReplayBuffer(object):
 
     def sample(self, batch_size):
         # TODO: Randomly sampling data with specific batch size from the buffer
+        state, action, reward, next_state, done = zip(*random.sample(self.buffer, batch_size))
+        return np.concatenate(state), action, reward, np.concatenate(next_state), done
 
 
-        return state, action, reward, next_state, done
+        # return state, action, reward, next_state, done
 
     def __len__(self):
         return len(self.buffer)
