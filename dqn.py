@@ -72,14 +72,6 @@ def compute_td_loss(model, target_model, batch_size, gamma, replay_buffer):
     reward = Variable(torch.FloatTensor(reward))
     done = Variable(torch.FloatTensor(done))
     # implement the loss function here
-
-    # q_values = target_model(state.squeeze(1))
-    # next_q_values = target_model(next_state)
-    # q_value = q_values.gather(1, action.unsqueeze(1)).squeeze(1)
-    # next_q_value = next_q_values.max(1)[0]
-    # expected_q_value = reward + gamma * next_q_value * (1 - done)
-    # loss = (q_value - Variable(expected_q_value.data)).pow(2).mean()
-
     q_values = model(state)
     next_q_values = target_model(next_state)
     q_value = q_values.gather(1, action.unsqueeze(1)).squeeze(1)
@@ -103,6 +95,5 @@ class ReplayBuffer(object):
         state, action, reward, next_state, done = zip(*random.sample(self.buffer, batch_size))
         return np.concatenate(state), action, reward, np.concatenate(next_state), done
         
-    
     def __len__(self):
         return len(self.buffer)
