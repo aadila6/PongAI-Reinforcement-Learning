@@ -46,9 +46,20 @@ all_rewards = []
 episode_reward = 0
 
 state = env.reset()
+def get_nonexistant_path(fname_path):
+
+    if not os.path.exists(fname_path):
+        return fname_path
+    filename, file_extension = os.path.splitext(fname_path)
+    i = 1
+    new_fname = "{}-{}{}".format(filename, i, file_extension)
+    while os.path.exists(new_fname):
+        i += 1
+        new_fname = "{}-{}{}".format(filename, i, file_extension)
+    return new_fname
 
 for frame_idx in range(1, num_frames + 1):
-    #print("Frame: " + str(frame_idx))
+    #print("Frame: " + str(frame_idx))d
 
     epsilon = epsilon_by_frame(frame_idx)
     action = model.act(state, epsilon)
@@ -80,6 +91,19 @@ for frame_idx in range(1, num_frames + 1):
 
     if frame_idx % 50000 == 0:
         target_model.copy_from(model)
+    
+    if frame_idx % 100000 == 0: 
+        print("SAVING MODEL AND PLOTS")
+        torch.save(model.state_dict(), get_nonexistant_path("model.pth"))
+        plt.plot(losses)
+        plt.ylabel('loss')
+        plt.savefig(get_nonexistant_path("loss_graph"))
+        plt.clf()
 
+        plt.plot(all_rewards)
+        plt.ylabel('reward')
+        plt.savefig(get_nonexistant_path("reward_graph"))
+        plt.clf()
+    
 
 
