@@ -95,17 +95,21 @@ for frame_idx in range(1, num_frames + 1):
     
     if frame_idx % 10000 == 0: 
         torch.save(model.state_dict(), "model.pth")
+        x = [loss[0] for loss in losses]
+        y = [loss[1] for loss in losses]
         plt.title = ("Loss changes Graph")
         plt.xlabel('frame#')
         plt.ylabel('loss')
-        plt.plot(losses, label = "Loss") 
+        plt.plot(x,y) 
         plt.savefig("loss.png")
         plt.close()
 
+        x = [res[0] for res in all_rewards]
+        y = [res[1] for res in all_rewards]
         plt.title = ("Rewards changes Graph")
         plt.xlabel('frame#')
         plt.ylabel('reward')
-        plt.plot(all_rewards, label = "Reward")
+        plt.plot(x,y)
         plt.savefig("rewards.png")
         plt.close()
 
