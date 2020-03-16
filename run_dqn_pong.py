@@ -93,13 +93,22 @@ for frame_idx in range(1, num_frames + 1):
     if frame_idx % 50000 == 0:
         target_model.copy_from(model)
     
-    if frame_idx % 100000 == 0: 
+    if frame_idx % 10000 == 0: 
         torch.save(model.state_dict(), "model.pth")
-        plt.plot(losses)
+        plt.title = ("Loss changes Graph")
+        plt.xlabel('frame#')
+        plt.ylabel('loss')
         plt.plot(losses, label = "Loss") 
+        plt.savefig("loss.png")
+        plt.close()
+
+        plt.title = ("Rewards changes Graph")
+        plt.xlabel('frame#')
+        plt.ylabel('reward')
         plt.plot(all_rewards, label = "Reward")
-        # plt.ylabel('loss')
-        plt.savefig("plot_graphs")
+        plt.savefig("rewards.png")
+        plt.close()
+
         plt.clf()
     
 
