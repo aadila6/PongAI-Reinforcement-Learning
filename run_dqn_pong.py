@@ -48,17 +48,6 @@ episode_reward = 0
 
 state = env.reset()
 
-def get_nonexistant_path(fname_path):
-    if not os.path.exists(fname_path):
-        return fname_path
-    filename, file_extension = os.path.splitext(fname_path)
-    i = 1
-    new_fname = "{}-{}{}".format(filename, i, file_extension)
-    while os.path.exists(new_fname):
-        i += 1
-        new_fname = "{}-{}{}".format(filename, i, file_extension)
-    return new_fname
-
 for frame_idx in range(1, num_frames + 1):
     #print("Frame: " + str(frame_idx))d
 
@@ -112,7 +101,6 @@ for frame_idx in range(1, num_frames + 1):
         plt.plot(x,y)
         plt.savefig("rewards.png")
         plt.close()
-
         plt.clf()
     
 
